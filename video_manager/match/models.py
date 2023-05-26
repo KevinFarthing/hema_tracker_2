@@ -50,7 +50,6 @@ class Match(PkModel):
     tags = db.relationship('Tag', secondary=tag_match_map)
     match_fighter_maps = db.relationship('MatchFighterMap', back_populates="match")
     videos = db.relationship('Video')
-
     def update_notes(self, notes):
         self.notes = notes
         db.session.commit()

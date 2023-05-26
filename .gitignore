@@ -57,7 +57,7 @@ env/
 # Development database
 *.db
 
-video_manager/video_manager/match/data.sql
+/video_manager/match/data.sql
 bulk_publish.js
 
 # Elastic Beanstalk Files
