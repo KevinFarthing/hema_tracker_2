@@ -1,11 +1,7 @@
 # -*- coding: utf-8 -*-
 """Match forms."""
 from flask_wtf import FlaskForm
-from wtforms import PasswordField, StringField, FormField, DateField, IntegerField, FieldList, SelectMultipleField, widgets, RadioField, SelectField
-from wtforms.validators import DataRequired, Email, EqualTo, Length
-from sqlalchemy import desc
-
-from .models import Match, Color, Fighter, MatchFighterMap, School, Tag, Tournament, Video
+from wtforms import StringField, FormField, IntegerField, FieldList, SelectMultipleField, widgets, SelectField
 
 class SearchTournamentForm(SelectMultipleField):
     """Tournament form"""
@@ -59,22 +55,6 @@ class UpdateMatchNoteForm(FlaskForm):
     """Match form."""
     notes = StringField("Notes")
 
-    def validate(self, **kwargs):
-        # """Validate the form."""
-        # initial_validation = super(MatchForm, self).validate()
-        # if not initial_validation:
-        #     return False
-        # user = User.query.filter_by(username=self.username.data).first()
-        # if user:
-        #     self.username.errors.append("Username already registered")
-        #     return False
-        # user = Match.query.filter_by(email=self.email.data).first()
-        # if user:
-        #     self.email.errors.append("Email already registered")
-        #     return False
-        return True
-
-
 class SelectColorForm(SelectField):
     """Color Form"""
     color = SelectField("Color")
@@ -89,12 +69,6 @@ class SelectFighterForm(FlaskForm):
         super(CreateMatchForm, self).__init__(*args, **kwargs)
         self.user = None
 
-    def validate(self, **kwargs):
-        # """Validate the form."""
-        # validate videos
-        return True
-
-
 class MatchFighterForm(FlaskForm):
     """Fighter Form"""
     color = SelectColorForm(coerce=int)
@@ -102,7 +76,6 @@ class MatchFighterForm(FlaskForm):
     fighter = UpdateFighterForm(coerce=int)
 
 class UpdateMatchFighterForm(FlaskForm):
-    # match_fighter_maps = FormField(MatchFighterForm)
     match_fighter_maps = FieldList(FormField(MatchFighterForm))
 
 class CreateMatchForm(FlaskForm):

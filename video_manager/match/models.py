@@ -2,18 +2,8 @@
 
 # -*- coding: utf-8 -*-
 """Match models."""
-import datetime as dt
-
-from sqlalchemy import text
-
-from sqlalchemy.orm import composite
-
-# from flask_login import UserMixin
-# from sqlalchemy.ext.hybrid import hybrid_property
 
 from video_manager.database import Column, PkModel, db, reference_col, relationship
-# from video_manager.extensions import bcrypt
-
 
 class Color(PkModel):
     __tablename__ = "colors"
@@ -58,7 +48,6 @@ class Match(PkModel):
     notes = Column(db.Text())
     winner = Column(db.String())
     tags = db.relationship('Tag', secondary=tag_match_map)
-    # fighters = db.relationship('Fighters', secondary=fight_fighter_map)
     match_fighter_maps = db.relationship('MatchFighterMap', back_populates="match")
     videos = db.relationship('Video')
 
@@ -71,7 +60,6 @@ class Match(PkModel):
         db.session.commit()
 
     def update_match_fighter_maps(self, data):
-        # match_id = self.id
         old_ids = [mfm.id for mfm in self.match_fighter_maps]
         MatchFighterMap.query.filter(MatchFighterMap.id.in_(old_ids)).delete()
 
@@ -112,16 +100,3 @@ class Video(PkModel):
 
     def __repr__(self):
         return f'{self.url}'
-
-
-# def get_match_ids_by_tournaments(tournament_ids):
-#     db.session.execute(text("SELECT id FROM matches WHERE")).all()
-
-# def get_match_ids_by_tags(tag_ids):
-#     db.session.execute(text("SELECT match_id FROM tag_match_map")).all()
-
-# def get_match_ids_by_fighters(fighter_ids):
-#     db.session.execute(text("SELECT match_id FROM tag_match_map")).all()
-
-# def get_match_ids_by_schools(school_ids):
-#     db.session.execute(text("SELECT match_id FROM tag_match_map")).all()
