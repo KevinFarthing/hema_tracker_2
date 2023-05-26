@@ -1,0 +1,6 @@
+[run]
+source = video_manager
+omit = 
+    tests/*
+    autoapp.py
+

@@ -1,0 +1,386 @@
+{% import "macros.html" as macros %} {% extends "layout.html" %} {% block
+content %}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+  const ID_RE = /(-)_(-)/;
+
+  /**
+   * Replace the template index of an element (-_-) with the
+   * given index.
+   */
+  function replaceTemplateIndex(value, index) {
+    return value.replace(ID_RE, "$1" + index + "$2");
+  }
+
+  /**
+   * Adjust the indices of form fields when removing items.
+   */
+  function adjustIndices(removedIndex) {
+    var $forms = $(".subform");
+
+    $forms.each(function (i) {
+      var $form = $(this);
+      var index = parseInt($form.data("index"));
+      var newIndex = index - 1;
+
+      if (index < removedIndex) {
+        // Skip
+        return true;
+      }
+
+      // This will replace the original index with the new one
+      // only if it is found in the format -num-, preventing
+      // accidental replacing of fields that may have numbers
+      // intheir names.
+      var regex = new RegExp("(-)" + index + "(-)");
+      var repVal = "$1" + newIndex + "$2";
+
+      // Change ID in form itself
+      $form.attr("id", $form.attr("id").replace(index, newIndex));
+      $form.data("index", newIndex);
+
+      // Change IDs in form fields
+      $form.find("label, input, select, textarea").each(function (j) {
+        var $item = $(this);
+
+        if ($item.is("label")) {
+          // Update labels
+          $item.attr("for", $item.attr("for").replace(regex, repVal));
+          return;
+        }
+
+        // Update other fields
+        $item.attr("id", $item.attr("id").replace(regex, repVal));
+        $item.attr("name", $item.attr("name").replace(regex, repVal));
+      });
+    });
+  }
+
+  /**
+   * Remove a form.
+   */
+  function removeForm() {
+    var $removedForm = $(this).closest(".subform");
+    var removedIndex = parseInt($removedForm.data("index"));
+
+    $removedForm.remove();
+
+    // Update indices
+    adjustIndices(removedIndex);
+  }
+
+  /**
+   * Add a new form.
+   */
+  function addForm() {
+    var $templateForm = $("#match_fighter_maps-_-form");
+
+    if ($templateForm.length === 0) {
+      console.log("[ERROR] Cannot find template");
+      return;
+    }
+
+    // Get Last index
+    var $lastForm = $(".subform").last();
+
+    var newIndex = 0;
+
+    console.log(parseInt($lastForm.data("index")));
+
+    if ($lastForm.length > 0) {
+      newIndex = parseInt($lastForm.data("index")) + 1;
+    }
+
+    // Maximum of 20 subforms
+    if (newIndex >= 20) {
+      console.log("[WARNING] Reached maximum number of elements");
+      return;
+    }
+
+    // Add elements
+    var $newForm = $templateForm.clone();
+
+    $newForm.attr("id", replaceTemplateIndex($newForm.attr("id"), newIndex));
+    $newForm.data("index", newIndex);
+
+    $newForm.find("label, input, select, textarea").each(function (idx) {
+      var $item = $(this);
+
+      if ($item.is("label")) {
+        // Update labels
+        $item.attr("for", replaceTemplateIndex($item.attr("for"), newIndex));
+        return;
+      }
+
+      // Update other fields
+      $item.attr("id", replaceTemplateIndex($item.attr("id"), newIndex));
+      $item.attr("name", replaceTemplateIndex($item.attr("name"), newIndex));
+    });
+
+    // Append
+    $("#subforms-container").append($newForm);
+    $newForm.addClass("subform");
+    $newForm.removeClass("visually-hidden");
+
+    $newForm.find(".remove").click(removeForm);
+  }
+
+  $(document).ready(function () {
+    $("#add").click(addForm);
+    $(".remove").click(removeForm);
+  });
+</script>
+<div class="container">
+  <div class="row g-2 py-2">
+    {% for color, fighters in match_fighter_maps.items() %}
+
+    <div class="col-sm-3">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">{{ color }}</h5>
+          {% for fighter in fighters %}
+          <p class="card-text">{{ fighter.fighter.name }}</p>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+    <div class="col-sm-3 ms-auto">
+      <button
+        type="button"
+        class="btn btn-primary"
+        data-bs-toggle="modal"
+        data-bs-target="#editFighters"
+      >
+        Edit Fighters
+      </button>
+    </div>
+  </div>
+  <div class="row g-2 py-2">
+    <div class="col-10">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Notes</h5>
+
+          <p class="card-text">{{ match.notes }}</p>
+          <button
+            type="button"
+            class="btn btn-primary justify-content-end"
+            data-bs-toggle="modal"
+            data-bs-target="#editNotes"
+          >
+            Edit Notes
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row g-2 py-2">
+    <div class="col-10">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Tags</h5>
+          {% for tag in match.tags %}
+          <p class="card-text">{{ tag.tag }}</p>
+          {% endfor %}
+          <button
+            type="button"
+            class="btn btn-primary justify-content-end"
+            data-bs-toggle="modal"
+            data-bs-target="#editTags"
+          >
+            Edit Tags
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row g-2 py-2">
+    <div class="col-10">
+      <div class="card">
+        {% for video in match.videos %}
+        <div class="ratio-16x9 ratio">
+          <iframe
+            class="embed-responsive-item"
+            src="https://www.youtube.com/embed/{{ video.url }}"
+            title="YouTube video player"
+            allowfullscreen
+          ></iframe>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <br />
+
+  <div
+    class="modal fade"
+    id="editTags"
+    tabindex="-1"
+    aria-labelledby="editTagModalLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editTagModalLabel">Edit Tags</h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <form
+            id="registerForm"
+            class="form form-register"
+            method="POST"
+            action=""
+            role="form"
+          >
+            {{ tag_form.csrf_token }}
+            <div class="form-group">
+              {{tag_form.tags.label}} {{tag_form.tags(placeholder="tags",
+              class_="form-control", style="max-height: 250px; overflow-y: auto;
+              min-width: 400px;")}}
+            </div>
+            <p>
+              <input
+                class="btn btn-primary"
+                type="submit"
+                value="Update Tags"
+              />
+            </p>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div
+    class="modal fade"
+    id="editNotes"
+    tabindex="-1"
+    aria-labelledby="editNoteModalLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editNoteModalLabel">Edit Notes</h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <form
+            id="registerForm"
+            class="form form-register"
+            method="POST"
+            action=""
+            role="form"
+          >
+            {{ note_form.csrf_token }}
+            <div class="form-group form-radio">
+              {{note_form.notes.label}} {{note_form.notes(placeholder="notes",
+              class_="form-control list-group")}}
+            </div>
+            <p>
+              <input
+                class="btn btn-primary"
+                type="submit"
+                value="Update Notes"
+              />
+            </p>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div
+    class="modal fade"
+    id="editFighters"
+    tabindex="-1"
+    aria-labelledby="editFighterModalLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editFighterModalLabel">Edit Fighters</h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <a id="add" href="#">Add Fighter</a>
+          <hr />
+          <form
+            id="registerForm"
+            class="form form-register"
+            method="POST"
+            action=""
+            role="form"
+          >
+            {{ fighter_form.csrf_token }}
+            <div class="form-group">
+              <div id="subforms-container">
+                {% for subform in fighter_form.match_fighter_maps %} {{
+                macros.render_fighter_form(subform, loop.index0) }} {% endfor %}
+              </div>
+            </div>
+            <p>
+              <input
+                class="btn btn-primary"
+                type="submit"
+                value="Update Fighters"
+                id="update-fighter"
+                name="update-fighter"
+              />
+            </p>
+          </form>
+
+          {{ macros.render_fighter_form(_template_fighter_form, '_') }}
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endblock %}
+</div>

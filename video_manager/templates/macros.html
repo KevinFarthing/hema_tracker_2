@@ -1,0 +1,26 @@
+{%- macro render_fighter_form(subform, index) %}
+<div
+  id="match_fighter_maps-{{ index }}-form"
+  class="{% if index != '_' %}subform{% else %}visually-hidden{% endif %}"
+  data-index="{{ index }}"
+>
+  <table id="match_fighter_maps-{{ index }}">
+    <tbody>
+      <tr>
+        <th>{{subform.color.label}}</th>
+        <td>{{subform.color}}</td>
+      </tr>
+      <tr>
+        <th>{{subform.order.label}}</th>
+        <td>{{subform.order}}</td>
+      </tr>
+      <tr>
+        <th>{{subform.fighter.label}}</th>
+        <td>{{subform.fighter}}</td>
+      </tr>
+    </tbody>
+  </table>
+  <a class="remove" href="#">Remove</a>
+  <hr />
+</div>
+{%- endmacro %}

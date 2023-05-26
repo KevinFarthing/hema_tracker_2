@@ -1,0 +1,25 @@
+{% extends "layout.html" %} {% block content %}
+<div class="container">
+  <table class="table table-bordered table-hover">
+    <thead>
+      <tr>
+        <th scope="col">Tournament</th>
+        <th>Fighters</th>
+      </tr>
+    </thead>
+    <tbody style="cursor: pointer">
+      {% for match in matches %}
+      <tr onclick="window.location='{{ match.id }}';">
+        <td>
+          {{ match.tournament.name }} {{ match.tournament.start_date.year }}
+        </td>
+        <td>
+          {% for mfm in match.match_fighter_maps %}{{mfm.fighter.name}}{% if not
+          loop.last %}, {% endif %}{% endfor %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
