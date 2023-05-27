@@ -37,6 +37,7 @@ services:
       FLASK_DEBUG: 0
       LOG_LEVEL: info
       GUNICORN_WORKERS: 4
+      DATABASE_URL: ${DATABASE_URL}
     <<: *default_volumes
 
   manage:
