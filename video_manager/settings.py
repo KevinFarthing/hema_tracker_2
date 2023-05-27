@@ -7,25 +7,14 @@ For local development, use a .env file to set
 environment variables.
 """
 from environs import Env
-from os import environ
 
 env = Env()
 env.read_env()
 
 ENV = env.str("FLASK_ENV", default="production")
 DEBUG = ENV == "development"
-if 'RDS_DB_NAME' in environ:
-    SQLALCHEMY_DATABASE_URI = \
-        'postgresql://{username}:{password}@{host}:{port}/{database}'.format(
-            username=env.str('RDS_USERNAME'),
-            password=env.str('RDS_PASSWORD'),
-            host=env.str('RDS_HOSTNAME'),
-            port=env.str('RDS_PORT'),
-            database=env.str('RDS_DB_NAME'),
-        )
-else:
-    SQLALCHEMY_DATABASE_URI = env.str("DATABASE_URL")
-
+# SQLALCHEMY_DATABASE_URI = "sqlite:///../app.db"
+SQLALCHEMY_DATABASE_URI = env.str("DATABASE_URL")
 SECRET_KEY = env.str("SECRET_KEY")
 SEND_FILE_MAX_AGE_DEFAULT = env.int("SEND_FILE_MAX_AGE_DEFAULT")
 BCRYPT_LOG_ROUNDS = env.int("BCRYPT_LOG_ROUNDS", default=13)
