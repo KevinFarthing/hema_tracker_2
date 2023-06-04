@@ -2,7 +2,12 @@
 <!-- Main jumbotron for a primary marketing message or call to action -->
 <div class="jumbotron">
   <div class="container">
-    <h1 class="display-3">Welcome to hema_tracker</h1>
+    <h1 class="display-3">Welcome to Hema Tracker</h1>
+    <h3>
+      This tool is intended to make it easier to sort and view recorded matches.
+      You may search existing matches, view all existing matches, or add a new
+      match entry.
+    </h3>
   </div>
 </div>
 <!-- /.jumbotron -->
@@ -10,40 +15,40 @@
 <div class="container">
   <div class="row">
     <div class="col-lg-4">
-      <h2><i class="fa-solid fa-code"></i> Bootstrap 5</h2>
+      <h2>Search Matches</h2>
+      <p>Search matches by fighters, schools, tournaments, or selected tags</p>
       <p>
-        Sleek, intuitive, and powerful mobile-first front-end framework for
-        faster and easier web development.
-      </p>
-      <p>
-        <a class="btn btn-outline-secondary" href="http://getbootstrap.com/"
-          >Official website &raquo;</a
+        <a
+          class="btn btn-outline-secondary"
+          href="{{ url_for('match.search') }}"
+          >Search Matches &raquo;</a
         >
       </p>
     </div>
     <div class="col-lg-4">
-      <h2><i class="fa-solid fa-flask"></i> SQLAlchemy</h2>
+      <h2>View Matches</h2>
       <p>
-        SQLAlchemy is the Python SQL toolkit and Object Relational Mapper that
-        gives application developers the full power and flexibility of SQL.
+        The complete list of matches available, sorted by tournament and
+        fighters.
       </p>
       <p>
-        <a href="http://www.sqlalchemy.org/" class="btn btn-outline-secondary"
-          >Official website &raquo;</a
+        <a href="{{ url_for('match.index') }}" class="btn btn-outline-secondary"
+          >All Matches &raquo;</a
         >
       </p>
     </div>
     <div class="col-lg-4">
-      <h2><i class="fa-solid fa-pen-to-square"></i> WTForms</h2>
+      <h2>Create Match</h2>
       <p>
-        WTForms is a flexible forms validation and rendering library for python
-        web development.
+        Select the tournament and add youtube video links, and then you'll be
+        redirected to a match page where you may add the fighters and any tags
+        or notes desired.
       </p>
       <p>
         <a
-          href="http://wtforms.simplecodes.com/"
+          href="{{ url_for('match.create') }}"
           class="btn btn-outline-secondary"
-          >Official website &raquo;</a
+          >Create Match &raquo;</a
         >
       </p>
     </div>
