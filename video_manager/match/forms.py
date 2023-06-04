@@ -81,8 +81,4 @@ class UpdateMatchFighterForm(FlaskForm):
 class CreateMatchForm(FlaskForm):
     """Match form."""
     tournament = SelectTournamentForm(coerce=int)
-    notes = StringField("Notes")
-    winner = StringField("Winner")
-    tags = FieldList(FormField(UpdateMatchTagForm))
-    match_fighter_maps = FieldList(FormField(MatchFighterForm))
     videos = StringField("Video URLS")

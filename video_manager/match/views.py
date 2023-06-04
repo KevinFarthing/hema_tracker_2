@@ -12,6 +12,8 @@ from flask import (
 from flask_login import login_required
 from collections import namedtuple
 
+import re
+
 from video_manager.utils import flash_errors
 
 from sqlalchemy import desc, asc
@@ -151,17 +153,21 @@ def match(match_id):
 def create():
     """Create new match."""
     form = CreateMatchForm(request.form)
+
+    tournaments = [(t.id, t.__repr__()) for t in Tournament.query.order_by(desc(Tournament.start_date)).all()]
+    form.tournament.choices = tournaments
     if form.validate_on_submit():
-        Match.create(
-            tournament=form.tournament.data,
-            notes=form.notes.data,
-            winner=form.winner.data,
-            tags=form.tags.data,
-            match_fighter_maps=form.match_fighter_maps.data,
-            videos=form.videos.data,
+        print(form.tournament.data)
+        print(form.videos.data)
+        urls = re.findall(r"([0-9A-Za-z_-]{11})", form.videos.data)
+        videos = [Video(url=url) for url in urls]
+        tournament = Tournament.query.filter_by(id=form.tournament.data[0]).first()
+        match = Match.create(
+            tournament=tournament,
+            videos=videos,
         )
         flash("Match added")
-        return redirect(url_for("create"))
+        return redirect(url_for('match.match', match_id=match.id))
     else:
         flash_errors(form)
     return render_template("matches/create.html", form=form)

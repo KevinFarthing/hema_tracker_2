@@ -133,28 +133,33 @@ content %}
 </script>
 <div class="container">
   <div class="row g-2 py-2">
-    {% for color, fighters in match_fighter_maps.items() %}
-
-    <div class="col-sm-3">
+    <div class="col-10">
       <div class="card">
         <div class="card-body">
-          <h5 class="card-title">{{ color }}</h5>
-          {% for fighter in fighters %}
-          <p class="card-text">{{ fighter.fighter.name }}</p>
+          <h5 class="card-title">Fighters</h5>
+          {% for color, fighters in match_fighter_maps.items() %}
+
+          <div class="col-sm-3">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">{{ color }}</h5>
+                {% for fighter in fighters %}
+                <p class="card-text">{{ fighter.fighter.name }}</p>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
           {% endfor %}
+          <button
+            type="button"
+            class="btn btn-primary justify-content-end"
+            data-bs-toggle="modal"
+            data-bs-target="#editFighters"
+          >
+            Edit Fighters
+          </button>
         </div>
       </div>
-    </div>
-    {% endfor %}
-    <div class="col-sm-3 ms-auto">
-      <button
-        type="button"
-        class="btn btn-primary"
-        data-bs-toggle="modal"
-        data-bs-target="#editFighters"
-      >
-        Edit Fighters
-      </button>
     </div>
   </div>
   <div class="row g-2 py-2">
