@@ -106,14 +106,12 @@ def match(match_id):
         for mfm in fighter_form.match_fighter_maps:
             mfm.fighter.choices = fighters
             mfm.color.choices = colors
-        print(request.form)
 
         if request.form.getlist('tags') and tag_form.validate_on_submit():
             match.update_tags(tag_form.tags.data)
         if request.form.getlist('notes') and note_form.validate_on_submit():
             match.update_notes(note_form.notes.data)
         if request.form.getlist('update-fighter') and fighter_form.validate_on_submit():
-            print(fighter_form.match_fighter_maps.data)
             match.update_match_fighter_maps(fighter_form.match_fighter_maps.data)
         return redirect(url_for('match.match', match_id=match_id))
     if request.method == 'GET':
